@@ -18,9 +18,21 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
+  <body class="bg-gray-50 flex flex-col min-h-screen">
+    <%= render "layouts/header" %>
+
+    <main class="flex-grow py-8 md:py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <%= render "layouts/flash" if notice || alert %>
+        <%= yield %>
+      </div>
     </main>
+
+    <footer class="bg-white border-t py-8">
+      <p class="text-center text-gray-400 text-sm">
+        &copy; <%= Time.current.year %> Health AI Coach. Your wellness partner.
+      </p>
+    </footer>
   </body>
+
 </html>
