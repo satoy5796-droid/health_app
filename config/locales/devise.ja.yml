@@ -1,0 +1,10 @@
+ja:
+  devise:
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+    registrations:
+      signed_up: "アカウント登録が完了しました。"
+    failure:
+      unauthenticated: "ログインまたはアカウント登録が必要です。"
+      invalid: "メールアドレスまたはパスワードが違います。"

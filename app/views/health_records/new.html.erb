@@ -1,0 +1,7 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">今日の記録をつける</h1>
+
+  <%= render "form", health_record: @health_record %>
+
+  <%= link_to "戻る", health_records_path, class: "block mt-6 text-sm text-gray-500 hover:text-blue-600" %>
+</div>

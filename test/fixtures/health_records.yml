@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  recorded_on: 2026-05-12
+  condition: 1
+  sleep_time: 1.5
+  breakfast_memo: MyText
+  lunch_memo: MyText
+  dinner_memo: MyText
+  ai_advice: MyText
+
+two:
+  user: two
+  recorded_on: 2026-05-12
+  condition: 1
+  sleep_time: 1.5
+  breakfast_memo: MyText
+  lunch_memo: MyText
+  dinner_memo: MyText
+  ai_advice: MyText

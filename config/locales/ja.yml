@@ -1,0 +1,18 @@
+ja:
+  activerecord:
+    models:
+      health_record: "健康記録"
+    attributes:
+      health_record:
+        recorded_on: "記録日"
+        condition: "体調"
+        sleep_time: "睡眠時間"
+        breakfast_memo: "朝食"
+        lunch_memo: "昼食"
+        dinner_memo: "夕食"
+  helpers:
+    submit:
+      create: "登録する"
+      update: "更新する"
+    select:
+      prompt: "選択してください"
