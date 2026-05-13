@@ -1,16 +1,25 @@
 class HealthRecordsController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:index]
   before_action :set_health_record, only: %i[ show edit update destroy ]
 
   # GET /health_records or /health_records.json
   def index
-    # 期間の判定（デフォルトは1週間）
-    @range = params[:range] == 'month' ? 1.month : 1.week
-    
-    # 自分のデータを取得
-    @health_records = current_user.health_records
-                                  .where(recorded_on: @range.ago..Date.today)
-                                  .order(:recorded_on)
+    # 1. ログインしている場合の処理
+    if user_signed_in?
+      # 期間の判定（デフォルトは1週間）
+      @range = params[:range] == 'month' ? 1.month : 1.week
+      
+      # 自分のデータを取得
+      @health_records = current_user.health_records
+                                    .where(recorded_on: @range.ago..Date.today)
+                                    .order(:recorded_on)
+                                    
+    # 2. 未ログイン（ログアウト直後含む）の場合の処理
+    else
+      # エラーを防ぐため、空のレコードセットを渡しておく
+      @health_records = HealthRecord.none
+    end
   end
 
   # GET /health_records/1 or /health_records/1.json

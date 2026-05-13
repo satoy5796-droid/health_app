@@ -1,8 +1,17 @@
 class ApplicationController < ActionController::Base
-  # ゲストログイン用のアクション
-  def guest_sign_in
-    user = User.guest
-    sign_in user
-    redirect_to root_path, notice: "ゲストとしてログインしました。"
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :target_sleep_time])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :target_sleep_time])
+  end
+
+  private
+
+  # ログアウト後は確実にルートパス（未ログイン画面）の文字列を返すだけにする
+  def after_sign_out_path_for(resource_or_scope)
+    root_path
   end
 end

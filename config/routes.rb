@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
-  resources :health_records
   devise_for :users
-  
+
+  # ゲストログイン専用の独立したルーティング
   devise_scope :user do
-    get 'users/guest_sign_in', to: 'application#guest_sign_in'
+    post 'users/guest_sign_in', to: 'users/guest_sessions#create', as: :users_guest_sign_in
   end
 
   resources :health_records

@@ -4,6 +4,8 @@
     <title><%= content_for(:title) || "Health App" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="turbo-cache-control" content="no-cache">
+    <meta name="turbo-visit-control" content="reload">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -24,7 +26,7 @@
 
     <main class="flex-grow py-8 md:py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <%= render "layouts/flash" if notice || alert %>
+        <%= render "layouts/flash" if flash.any? %>
         <%= yield %>
       </div>
     </main>
