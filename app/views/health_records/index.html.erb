@@ -13,17 +13,19 @@
 
   <!-- 複合グラフ -->
   <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-10">
-    <%= column_chart [
-      { name: "睡眠時間(h)", data: @health_records.pluck(:recorded_on, :sleep_time) },
-      { name: "体調スコア(1-5)", data: @health_records.pluck(:recorded_on, :condition), library: { type: "line", yAxisID: "y-condition" } }
-    ], 
-    ytitle: "時間", 
-    library: {
-      scales: {
-        "y-condition": { position: "right", title: { display: true, text: "体調スコア" }, min: 0, max: 5 }
-      }
-    } %>
-  </div>
+  <%# データを配列形式で渡し、libraryオプションで2番目の系列(体調スコア)を折れ線グラフ(line)にします %>
+  <%= column_chart [
+    { name: "睡眠時間(h)", data: @health_records.pluck(:recorded_on, :sleep_time) },
+    { name: "体調スコア(1-5)", data: @health_records.pluck(:recorded_on, :condition) }
+  ], 
+  ytitle: "時間 / スコア",
+  library: {
+    series: {
+      1 => { type: "line" } # 0から数えて1番目（2列目）のデータを折れ線に変える指示
+    }
+  } %>
+</div>
+
 
   <!-- 記録するボタン -->
   <div class="flex justify-end mb-6">

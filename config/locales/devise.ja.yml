@@ -8,3 +8,4 @@ ja:
     failure:
       unauthenticated: "ログインまたはアカウント登録が必要です。"
       invalid: "メールアドレスまたはパスワードが違います。"
+      already_authenticated: "すでにログインしています。"

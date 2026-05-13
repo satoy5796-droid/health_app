@@ -10,6 +10,14 @@ ja:
         breakfast_memo: "朝食"
         lunch_memo: "昼食"
         dinner_memo: "夕食"
+  errors:
+      messages:
+        taken: "はすでに存在します"
+        not_a_number: "は数値で入力してください"
+        greater_than_or_equal_to: "は%{count}以上の値にしてください"
+        less_than_or_equal_to: "は%{count}以下の値にしてください"
+        blank: "を入力してください"
+        cannot_be_in_the_future: "に未来の日付は指定できません"
   helpers:
     submit:
       create: "登録する"

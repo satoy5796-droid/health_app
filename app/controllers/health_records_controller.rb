@@ -28,23 +28,41 @@ class HealthRecordsController < ApplicationController
 
   # POST /health_records or /health_records.json
   def create
-    @health_record = current_user.health_records.build(health_record_params)
+    # ① 入力された日付の既存レコードがあるか探す
+    existing_record = current_user.health_records.find_by(recorded_on: health_record_params[:recorded_on])
 
-    if @health_record.save
-      # 保存後にAIアドバイスを生成（API通信が入るので少し時間がかかります）
-      @health_record.generate_ai_advice
-      redirect_to health_record_url(@health_record), notice: "健康記録を保存し、AIアドバイスを生成しました。"
+    if existing_record
+      # 【修正箇所】既存レコードがある場合、変数名を @health_record にする
+      @health_record = existing_record
+      
+      if @health_record.update(health_record_params)
+        @health_record.generate_ai_advice
+        redirect_to health_record_url(@health_record), notice: "本日の記録を上書き更新しました。"
+      else
+        # ここで _form.html.erb に @health_record が渡されます
+        render :new, status: :unprocessable_entity
+      end
     else
-      render :new, status: :unprocessable_entity
+      # ② 新規作成の場合
+      @health_record = current_user.health_records.build(health_record_params)
+      
+      if @health_record.save
+        @health_record.generate_ai_advice
+        redirect_to health_record_url(@health_record), notice: "健康記録を保存し、AIアドバイスを生成しました。"
+      else
+        render :new, status: :unprocessable_entity
+      end
     end
   end
+
 
 
   # PATCH/PUT /health_records/1 or /health_records/1.json
   def update
     respond_to do |format|
       if @health_record.update(health_record_params)
-        format.html { redirect_to @health_record, notice: "Health record was successfully updated.", status: :see_other }
+        @health_record.generate_ai_advice
+        format.html { redirect_to @health_record, notice: "健康記録を更新しました。", status: :see_other }
         format.json { render :show, status: :ok, location: @health_record }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -58,7 +76,7 @@ class HealthRecordsController < ApplicationController
     @health_record.destroy!
 
     respond_to do |format|
-      format.html { redirect_to health_records_path, notice: "Health record was successfully destroyed.", status: :see_other }
+      format.html { redirect_to health_records_path, notice: "健康記録を削除しました。", status: :see_other }
       format.json { head :no_content }
     end
   end

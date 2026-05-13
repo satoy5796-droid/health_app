@@ -1,25 +1,64 @@
-<% content_for :title, "Showing health record" %>
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <!-- ヘッダーエリア -->
+  <div class="flex justify-between items-center mb-8 border-b pb-4">
+    <div>
+      <p class="text-sm font-medium text-gray-500">Health AI Coach</p>
+      <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight"><%= @health_record.recorded_on %> の記録</h1>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to "編集する", edit_health_record_path(@health_record), class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 shadow-sm" %>
+      <%= button_to "削除", health_record_path(@health_record), method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？" } }, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 shadow-sm" %>
+    </div>
+  </div>
 
-<div class="md:w-2/3 w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
+  <!-- 数値データカード（2列） -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-gray-500 mb-1">今日の体調</p>
+        <p class="text-3xl font-bold text-gray-900"><%= "⭐" * @health_record.condition %></p>
+      </div>
+      <span class="text-3xl">😊</span>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-gray-500 mb-1">睡眠時間</p>
+        <p class="text-3xl font-bold text-gray-900"><%= @health_record.sleep_time %> <span class="text-lg font-medium text-gray-500">時間</span></p>
+      </div>
+      <span class="text-3xl">🌙</span>
+    </div>
+  </div>
 
-  <h1 class="font-bold text-4xl">Showing health record</h1>
+  <!-- AIアドバイス（主役カード） -->
+  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-6 rounded-r-2xl shadow-sm mb-8">
+    <h2 class="text-blue-900 font-bold text-lg mb-2 flex items-center">
+      <span class="mr-2">🤖</span> AI健康コーチのアドバイス
+    </h2>
+    <p class="text-gray-700 leading-relaxed italic">
+      <%= @health_record.ai_advice.presence || "現在アドバイスを分析・生成中です。しばらくお待ちください..." %>
+    </p>
+  </div>
 
-  <%= render @health_record %>
+  <!-- 食事の記録（3列） -->
+  <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+    <h2 class="text-lg font-bold text-gray-900 border-b pb-3 mb-6 flex items-center">
+      <span class="mr-2">🍽️</span> 食事の振り返り
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+        <p class="font-bold text-orange-700 mb-2 flex items-center">☀️ 朝食</p>
+        <p class="text-gray-700 text-sm whitespace-pre-wrap"><%= @health_record.breakfast_memo.presence || "（記録なし）" %></p>
+      </div>
+      <div class="bg-green-50/50 p-4 rounded-xl border border-green-100">
+        <p class="font-bold text-green-700 mb-2 flex items-center">☁️ 昼食</p>
+        <p class="text-gray-700 text-sm whitespace-pre-wrap"><%= @health_record.lunch_memo.presence || "（記録なし）" %></p>
+      </div>
+      <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+        <p class="font-bold text-indigo-700 mb-2 flex items-center">🌙 夕食</p>
+        <p class="text-gray-700 text-sm whitespace-pre-wrap"><%= @health_record.dinner_memo.presence || "（記録なし）" %></p>
+      </div>
+    </div>
+  </div>
 
-  <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-r-xl my-8">
-  <h2 class="text-blue-800 font-bold mb-2 flex items-center">
-    <span class="mr-2">🤖</span> AI健康コーチのアドバイス
-  </h2>
-  <p class="text-gray-700 italic">
-    <%= @health_record.ai_advice.presence || "現在アドバイスを生成中です..." %>
-  </p>
-</div>
-
-
-  <%= link_to "Edit this health record", edit_health_record_path(@health_record), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to health records", health_records_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= button_to "Destroy this health record", @health_record, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+  <%= link_to "履歴とグラフに戻る", health_records_path, class: "inline-block mt-8 text-sm text-gray-500 hover:text-blue-600 transition" %>
 </div>

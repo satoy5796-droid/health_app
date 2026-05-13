@@ -1,10 +1,12 @@
-<% content_for :title, "Editing health record" %>
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">健康記録を編集する</h1>
+    <%= link_to "この記録を見る", health_record_path(@health_record), class: "text-sm text-blue-600 hover:underline" %>
+  </div>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing health record</h1>
+  <div class="bg-white shadow-sm rounded-xl p-6 md:p-8 border border-gray-100">
+    <%= render "form", health_record: @health_record %>
+  </div>
 
-  <%= render "form", health_record: @health_record %>
-
-  <%= link_to "Show this health record", @health_record, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to health records", health_records_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <%= link_to "履歴に戻る", health_records_path, class: "block mt-6 text-sm text-gray-500 hover:text-blue-600 w-fit" %>
 </div>

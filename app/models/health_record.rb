@@ -1,6 +1,10 @@
 class HealthRecord < ApplicationRecord
   belongs_to :user
   validates :recorded_on, presence: true, uniqueness: { scope: :user_id }
+  validates :sleep_time, presence: true, 
+                         numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 24 }
+  validates :condition, presence: true
+  validate :recorded_on_cannot_be_in_the_future
 
   def generate_ai_advice
     client = OpenAI::Client.new(access_token: Rails.application.credentials.openai[:api_key])
@@ -29,5 +33,13 @@ class HealthRecord < ApplicationRecord
     # エラーが起きてもログに記録するだけで、アプリは止めない
     logger.error "AI Advice Generation Failed: #{e.message}"
     update(ai_advice: "現在、アドバイスを生成できません。時間を置いて確認してください。")
+  end
+
+  private
+
+  def recorded_on_cannot_be_in_the_future
+    if recorded_on.present? && recorded_on > Date.today
+      errors.add(:recorded_on, :cannot_be_in_the_future)
+    end
   end
 end
