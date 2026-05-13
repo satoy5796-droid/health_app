@@ -1,29 +1,63 @@
-<h2>Sign up</h2>
-
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+<div class="min-h-[80vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto w-full max-w-md">
+    <h2 class="text-center text-3xl font-extrabold text-gray-900 tracking-tight">
+      新規アカウント登録
+    </h2>
   </div>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
-    <% end %>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-  </div>
+  <div class="mt-8 sm:mx-auto w-full max-w-md">
+    <div class="bg-white py-8 px-4 shadow sm:rounded-xl sm:px-10 border border-gray-100">
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-5" }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
+        <div>
+          <%= f.label :name, "お名前", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1">
+            <%= f.text_field :name, autofocus: true, placeholder: "健康 太郎", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
 
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
+        <div>
+          <%= f.label :email, "メールアドレス", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1">
+            <%= f.email_field :email, autocomplete: "email", placeholder: "your@example.com", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
 
-<%= render "devise/shared/links" %>
+        <div>
+          <%= f.label :target_sleep_time, "目標睡眠時間 (時間)", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1">
+            <%= f.number_field :target_sleep_time, step: 0.5, value: 7.5, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between">
+            <%= f.label :password, "パスワード", class: "block text-sm font-medium text-gray-700" %>
+            <% if @minimum_password_length %>
+              <span class="text-xs text-gray-400">(<%= @minimum_password_length %>文字以上)</span>
+            <% end %>
+          </div>
+          <div class="mt-1">
+            <%= f.password_field :password, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "パスワード（確認用）", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1">
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <%= f.submit "アカウントを登録する", class: "w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition cursor-pointer" %>
+        </div>
+      <% end %>
+
+      <div class="mt-6 border-t border-gray-100 pt-4 text-center text-xs space-y-2">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>
