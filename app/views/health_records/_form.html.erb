@@ -12,20 +12,40 @@
 
   <div class="space-y-6">
     <!-- セクション1: 基本情報 -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div>
-        <%= form.label :recorded_on, "記録日", class: "block text-sm font-bold text-gray-700 mb-1" %>
-        <%= form.date_field :recorded_on, value: (health_record.recorded_on || Date.today), max: Date.today, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+    <!-- レイアウト変更: 体調ボタンを横いっぱいに配置するためflex/gridで上下に分割 -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6">
+      <!-- 上段: 記録日と睡眠時間を2列で配置 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= form.label :recorded_on, "記録日", class: "block text-sm font-bold text-gray-700 mb-1" %>
+          <%= form.date_field :recorded_on, value: (health_record.recorded_on || Date.today), max: Date.today, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.label :sleep_time, "睡眠時間 (h)", class: "block text-sm font-bold text-gray-700 mb-1" %>
+          <%= form.number_field :sleep_time, step: 0.5, min: 0, max: 24, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500", placeholder: "7.0" %>
+        </div>
       </div>
 
+      <!-- 下段: 今日の体調（5段階ボタンUIを埋め込み） -->
       <div>
-        <%= form.label :condition, "今日の体調 (1-5)", class: "block text-sm font-bold text-gray-700 mb-1" %>
-        <%= form.select :condition, (1..5).to_a.reverse, {prompt: "選択してください"}, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-      </div>
-
-      <div>
-        <%= form.label :sleep_time, "睡眠時間 (h)", class: "block text-sm font-bold text-gray-700 mb-1" %>
-        <%= form.number_field :sleep_time, step: 0.5, min: 0, max: 24, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500", placeholder: "7.0" %>
+        <%= form.label :condition, "今日の体調", class: "block text-sm font-bold text-gray-700 mb-2" %>
+        <div class="grid grid-cols-5 gap-2 sm:gap-3">
+          <% [
+            ["5", "最高", "😊"],
+            ["4", "良い", "🙂"],
+            ["3", "普通", "😐"],
+            ["2", "悪い", "🙁"],
+            ["1", "最悪", "🤮"]
+          ].each do |value, label, emoji| %>
+            <label class="group flex flex-col items-center justify-center p-3 border border-gray-200 bg-white rounded-xl cursor-pointer shadow-sm transition-all duration-200 select-none hover:bg-gray-50 hover:border-gray-300 has-[:checked]:bg-blue-50/70 has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-100">
+              <%= form.radio_button :condition, value, class: "sr-only" %>
+              <span class="text-xl sm:text-2xl transition-transform group-hover:scale-110"><%= emoji %></span>
+              <span class="text-sm font-bold text-gray-900 mt-1 group-has-[:checked]:text-blue-700"><%= value %></span>
+              <span class="text-[10px] sm:text-xs text-gray-400 font-medium mt-0.5 group-has-[:checked]:text-blue-500"><%= label %></span>
+            </label>
+          <% end %>
+        </div>
       </div>
     </div>
 

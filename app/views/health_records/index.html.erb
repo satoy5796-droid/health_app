@@ -1,88 +1,163 @@
+<!-- app/views/health_records/index.html.erb -->
 <% if user_signed_in? %>
-  <% # ========================================== %>
-  <% # 1. ログイン中の画面（既存のグラフとテーブル） %>
-  <% # ========================================== %>
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <%= turbo_frame_tag "health_chart_frame" do %>
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">健康記録グラフ</h1>
-        
-        <!-- 期間切り替えボタン -->
-        <div class="inline-flex rounded-md shadow-sm">
-          <%= link_to "1週間", health_records_path(range: 'week'), 
-              class: "px-4 py-2 text-sm font-medium border rounded-l-lg #{params[:range] != 'month' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}" %>
-          <%= link_to "1ヶ月", health_records_path(range: 'month'), 
-              class: "px-4 py-2 text-sm font-medium border rounded-r-lg #{params[:range] == 'month' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}" %>
-        </div>
+  <div class="space-y-10 py-6">
+    <!-- 上部アクション・要約エリア -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-200 pb-5">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">ダッシュボード</h1>
+        <p class="mt-1 text-sm text-gray-500">あなたの直近の健康状態とAIアドバイスの履歴です。</p>
       </div>
-
-      <!-- 複合グラフ -->
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-10">
-        <%# データを配列形式で渡し、libraryオプションで2番目の系列(体調スコア)を折れ線グラフ(line)にします %>
-        <%= column_chart [
-          { name: "睡眠時間(h)", data: @health_records.pluck(:recorded_on, :sleep_time) },
-          { name: "体調スコア(1-5)", data: @health_records.pluck(:recorded_on, :condition) }
-        ], 
-        ytitle: "時間 / スコア",
-        library: {
-          series: {
-            1 => { type: "line" } # 0から数えて1番目（2列目）のデータを折れ線に変える指示
-          }
-        } %>
+      <div class="flex items-center gap-3">
+        <%= link_to new_health_record_path, data: { turbo: false }, class: "inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors duration-200" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          今日の体調を記録する
+        <% end %>
       </div>
-    <% end %>
-
-    <!-- 記録するボタン -->
-    <div class="flex justify-end mb-6">
-      <%= link_to "今日の記録をつける", new_health_record_path, class: "bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-blue-700 transition" %>
     </div>
-    
-    <!-- 履歴テーブル -->
-    <div class="mt-8 overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-      <table class="min-w-full divide-y divide-gray-300">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日付</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">体調</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider md:table-cell hidden">食事（夕食）</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% @health_records.each do |record| %>
-            <tr class="hover:bg-gray-50 transition">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= record.recorded_on %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= "⭐" * record.condition %></td>
-              <td class="px-6 py-4 text-sm text-gray-500 md:table-cell hidden truncate max-w-xs"><%= record.dinner_memo %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <%= link_to "詳細", health_record_path(record), class: "text-blue-600 hover:text-blue-900 mr-3" %>
-                <%= link_to "編集", edit_health_record_path(record), class: "text-gray-600 hover:text-gray-900" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+
+    <!-- グラフ表示エリア -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200/80 overflow-hidden p-6">
+      <%= turbo_frame_tag "health_chart_frame" do %>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-base font-semibold text-gray-900">体調推移グラフ</h2>
+          <div class="inline-flex rounded-lg p-0.5 bg-gray-100 border border-gray-200">
+            <%= link_to "1週間", health_records_path(range: 'week'), class: "px-3 py-1.5 text-xs font-medium rounded-md transition-all #{params[:range] != 'month' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}" %>
+            <%= link_to "1ヶ月", health_records_path(range: 'month'), class: "px-3 py-1.5 text-xs font-medium rounded-md transition-all #{params[:range] == 'month' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}" %>
+          </div>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-10">
+          <%# 基礎を複合グラフ専用の「line_chart」にし、睡眠時間側だけを棒(bar)に変えるアプローチが最も安定します %>
+          <%= line_chart [
+            { 
+              name: "睡眠時間(h)", 
+              data: @health_records.pluck(:recorded_on, :sleep_time)
+            },
+            { 
+              name: "体調スコア(1-5)", 
+              data: @health_records.pluck(:recorded_on, :condition) # デフォルトでベースのline(折れ線)になる
+            }
+          ], 
+          ytitle: "時間 / スコア",
+          library: {
+            datasets: [
+              { order: 2 }, # 1番目の系列（睡眠時間・棒）を背面へ
+              { order: 1 }  # 2番目の系列（体調スコア・折れ線）を最前面へ
+            ]
+          } %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 記録一覧テーブルエリア -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200/80 overflow-hidden">
+      <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-lg font-bold text-gray-900">健康データ履歴</h2>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+          全 <%= @health_records.count %> 件のデータ
+        </span>
+      </div>
+
+      <% if @health_records.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-left">
+            <thead class="bg-gray-50/70">
+              <tr>
+                <th scope="col" class="px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">記録日</th>
+                <th scope="col" class="px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">睡眠時間</th>
+                <th scope="col" class="px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">体調ステータス</th>
+                <th scope="col" class="px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">AIコーチの助言状態</th>
+                <th scope="col" class="relative px-6 py-3.5">
+                  <span class="sr-only">操作</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 bg-white">
+              <% @health_records.reverse_each do |record| %>
+                <tr class="hover:bg-gray-50/50 transition-colors duration-150">
+                  <!-- 記録日 -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                    <%= l(record.recorded_on, format: :long) rescue record.recorded_on %>
+                  </td>
+                  <!-- 睡眠時間 -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <span class="font-medium text-gray-900"><%= record.sleep_time %></span> 時間
+                  </td>
+                  <!-- 修正: 文字列判定から5段階の数値・絵文字バッジ判定へ変更（移行期エラー防止のため.to_iを使用） -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <% case record.condition.to_i %>
+                    <% when 5 %>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-teal-50 text-teal-700 border border-teal-100">
+                        <span class="text-sm">😊</span> 5 (最高)
+                      </span>
+                    <% when 4 %>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                        <span class="text-sm">🙂</span> 4 (良い)
+                      </span>
+                    <% when 3 %>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
+                        <span class="text-sm">😐</span> 3 (普通)
+                      </span>
+                    <% when 2 %>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-orange-50 text-orange-700 border border-orange-100">
+                        <span class="text-sm">🙁</span> 2 (悪い)
+                      </span>
+                    <% when 1 %>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-rose-50 text-rose-700 border border-rose-100">
+                        <span class="text-sm">🤮</span> 1 (最悪)
+                      </span>
+                    <% else %>
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-400 border border-gray-100">
+                        不明 (<%= record.condition %>)
+                      </span>
+                    <% end %>
+                  </td>
+                  <!-- AIコーチの助言状態 -->
+                  <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                    <% if record.ai_advice.present? %>
+                      <span class="text-blue-600 font-medium inline-flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        生成完了
+                      </span>
+                    <% else %>
+                      <span class="inline-flex items-center gap-1.5 text-gray-400 animate-pulse">
+                        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18"/></svg>
+                        分析中...
+                      </span>
+                    <% end %>
+                  </td>
+                  <!-- 詳細・編集リンクボタン -->
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div class="flex items-center justify-end gap-3">
+                      <%= link_to health_record_path(record), data: { turbo: false }, class: "text-gray-500 hover:text-blue-600 transition-colors" do %>
+                        詳細
+                      <% end %>
+                      <%= link_to edit_health_record_path(record), data: { turbo: false }, class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+                        編集
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <!-- 空白状態のプレースホルダー -->
+        <div class="text-center py-16 px-4">
+          <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <p class="text-base font-semibold text-gray-900">対象期間のデータがまだありません</p>
+          <p class="text-sm text-gray-500 mt-1">最初のヘルスケアデータを記録して、AIアドバイスを受け取りましょう。</p>
+        </div>
+      <% end %>
     </div>
   </div>
-
 <% else %>
-  <% # ========================================== %>
-  <% # 2. 未ログイン・ログアウト直後の画面（新設） %>
-  <% # ========================================== %>
   <div class="max-w-md mx-auto my-12 p-8 bg-white rounded-xl shadow-md border border-gray-100 text-center">
-    <div class="inline-flex p-3 bg-blue-50 rounded-full text-blue-600 mb-4">
-      <svg xmlns="w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
-      </svg>
-    </div>
-    <h1 class="text-2xl font-extrabold text-blue-600 mb-4">Health AI Coach</h1>
-    <p class="text-gray-600 text-sm mb-8 leading-relaxed">
-      日々の体調や睡眠時間を記録し、AIからパーソナルな健康アドバイスを受け取りましょう。
-    </p>
-    <div class="space-y-3">
-      <%= button_to "ゲストとして利用開始", users_guest_sign_in_path, method: :post, data: { turbo: false }, class: "block w-full text-center bg-green-600 text-white py-3 rounded-md font-bold shadow-sm hover:bg-green-700 transition" %>
-      <%= link_to "アカウントにログイン", new_user_session_path, data: { turbo: false }, class: "block w-full text-center bg-blue-600 text-white py-3 rounded-md font-bold shadow-sm hover:bg-blue-700 transition" %>
-      <%= link_to "新しくアカウントを登録", new_user_registration_path, data: { turbo: false }, class: "block w-full text-center text-sm font-semibold text-gray-500 hover:text-blue-600 transition pt-2" %>
-    </div>
+    <!-- 案内文言 -->
+    <%= button_to "ゲストとして利用開始", users_guest_sign_in_path, method: :post, data: { turbo: false }, class: "bg-green-600 text-white ..." %>
+    <%= link_to "アカウントにログイン", new_user_session_path, data: { turbo: false }, class: "bg-blue-600 text-white ..." %>
+    <%= link_to "新しくアカウントを登録", new_user_registration_path, data: { turbo: false }, class: "text-gray-500 ..." %>
   </div>
 <% end %>

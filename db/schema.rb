@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_12_100746) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_14_065033) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "health_records", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.date "recorded_on"
-    t.integer "condition"
+    t.integer "condition", default: 3, null: false
     t.float "sleep_time"
     t.text "breakfast_memo"
     t.text "lunch_memo"
