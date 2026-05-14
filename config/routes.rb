@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # 開発環境の時だけ、メールボックス画面のURLを有効化する
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
   devise_for :users
 
   # ゲストログイン専用の独立したルーティング

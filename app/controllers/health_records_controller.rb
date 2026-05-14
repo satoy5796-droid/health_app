@@ -45,7 +45,7 @@ class HealthRecordsController < ApplicationController
       @health_record = existing_record
       
       if @health_record.update(health_record_params)
-        @health_record.generate_ai_advice
+        GenerateAiAdviceJob.perform_later(@health_record.id)
         redirect_to health_record_url(@health_record), notice: "本日の記録を上書き更新しました。"
       else
         # ここで _form.html.erb に @health_record が渡されます
@@ -70,7 +70,7 @@ class HealthRecordsController < ApplicationController
   def update
     respond_to do |format|
       if @health_record.update(health_record_params)
-        @health_record.generate_ai_advice
+        GenerateAiAdviceJob.perform_later(@health_record.id)
         format.html { redirect_to @health_record, notice: "健康記録を更新しました。", status: :see_other }
         format.json { render :show, status: :ok, location: @health_record }
       else

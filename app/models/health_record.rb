@@ -1,5 +1,9 @@
 class HealthRecord < ApplicationRecord
   belongs_to :user
+
+  # モデルからビューへストリーミングをブロードキャストできるようにする設定
+  include Turbo::Broadcastable
+
   validates :recorded_on, presence: true, uniqueness: { scope: :user_id }
   validates :sleep_time, presence: true, 
                          numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 24 }

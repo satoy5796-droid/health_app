@@ -1,42 +1,111 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="max-w-4xl mx-auto px-4 py-10">
+  <div class="md:grid md:grid-cols-3 md:gap-6">
+    
+    <!-- 左側：説明エリア -->
+    <div class="md:col-span-1 mb-6 md:mb-0">
+      <h3 class="text-lg font-bold leading-6 text-gray-900">アカウント設定</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        登録情報の変更や、目標睡眠時間の調整を行うことができます。
+      </p>
+    </div>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <!-- 右側：フォームエリア -->
+    <div class="mt-5 md:mt-0 md:col-span-2">
+      <div class="shadow sm:rounded-xl overflow-hidden border border-gray-100 bg-white p-6 sm:p-8">
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-6" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+          <div>
+            <%= f.label :name, "お名前", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= f.text_field :name, autofocus: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :email, "メールアドレス", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= f.email_field :email, autocomplete: "email", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            </div>
+          </div>
+
+          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+            <div class="text-xs text-yellow-600 bg-yellow-50 p-2 rounded">
+              現在、次のアドレスの確認を待っています: <%= resource.unconfirmed_email %>
+            </div>
+          <% end %>
+
+          <div>
+            <%= f.label :target_sleep_time, "目標睡眠時間 (時間)", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= f.number_field :target_sleep_time, step: 0.5, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            </div>
+          </div>
+
+          <hr class="border-gray-100 my-6">
+
+          <div>
+            <div class="flex justify-between">
+              <%= f.label :password, "新しいパスワード", class: "block text-sm font-medium text-gray-700" %>
+              <span class="text-xs text-gray-400">(変更したくない場合は空欄のまま)</span>
+            </div>
+            <div class="mt-1">
+              <%= f.password_field :password, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :password_confirmation, "新しいパスワード（確認用）", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            </div>
+          </div>
+
+          <hr class="border-gray-100 my-6">
+
+          <div>
+            <div class="flex justify-between">
+              <%= f.label :current_password, "現在のパスワード", class: "block text-sm font-medium text-gray-700 font-bold text-blue-600" %>
+              <span class="text-xs text-red-500">(設定変更の保存には必須です)</span>
+            </div>
+            <div class="mt-1">
+              <%= f.password_field :current_password, autocomplete: "current-password", class: "appearance-none block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-4 space-x-3">
+            <%= link_to "戻る", :back, class: "inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            <%= f.submit "設定を更新する", class: "inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+  <!-- 下段：危険ゾーン（アカウント削除） -->
+  <div class="hidden sm:block my-8 border-t border-gray-200"></div>
 
-  <div class="field">
-    <p><%= f.label :password %> <i>(leave blank if you don't want to change it)</i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> characters minimum</em></p>
-    <% end %>
+  <div class="md:grid md:grid-cols-3 md:gap-6 mt-10 sm:mt-0">
+    <div class="md:col-span-1">
+      <h3 class="text-lg font-bold leading-6 text-red-600">危険ゾーン</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        アカウントの削除を行うと、これまでのすべての健康記録が完全に削除され、復元できなくなります。
+      </p>
+    </div>
+    <div class="mt-5 md:mt-0 md:col-span-2">
+      <div class="shadow sm:rounded-xl border border-red-100 bg-red-50 p-6 sm:p-8">
+        <h4 class="text-sm font-bold text-red-800 mb-2">Health AI Coach からの退会</h4>
+        <p class="text-xs text-red-700 mb-4">
+          データ依存関係に基づき、あなたに関連づけられた健康データ、AIアドバイス履歴は即座にすべて消去されます。
+        </p>
+        <div class="flex justify-start">
+          <%# 💡 Turboのダイアログ確認付きで安全にDELETEリクエストを送信 %>
+          <%= button_to "アカウントを完全に削除する", registration_path(resource_name), 
+              method: :delete, 
+              data: { confirm: "本当に退会しますか？この操作は取り消せません。", turbo_confirm: "本当に退会しますか？この操作は取り消せません。" }, 
+              class: "inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer" %>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

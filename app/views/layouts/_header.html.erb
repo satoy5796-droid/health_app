@@ -15,6 +15,7 @@
           <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-md shadow-lg py-1 z-50">
             <%= link_to "記録をつける", new_health_record_path, data: { turbo: false }, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
             <%= link_to "履歴とグラフ", health_records_path, data: { turbo: false }, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+            <%= link_to "アカウント設定", edit_user_registration_path, data: { turbo: false }, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
             <hr class="my-1 border-gray-100">
             
             <%# 💡 確実にログアウトを単体フォームで送信する（インラインでメニューを隠すJSを付与） %>

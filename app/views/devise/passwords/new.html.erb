@@ -1,16 +1,33 @@
-<h2>Forgot your password?</h2>
-
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+<div class="min-h-[70vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto w-full max-w-md">
+    <h2 class="text-center text-3xl font-extrabold text-gray-900 tracking-tight">
+      パスワードをお忘れですか？
+    </h2>
+    <p class="mt-2 text-center text-sm text-gray-600">
+      ご登録済みのメールアドレスあてに、再設定用のリンクをお送りします。
+    </p>
   </div>
 
-  <div class="actions">
-    <%= f.submit "Send me password reset instructions" %>
-  </div>
-<% end %>
+  <div class="mt-8 sm:mx-auto w-full max-w-md">
+    <div class="bg-white py-8 px-4 shadow sm:rounded-xl sm:px-10 border border-gray-100">
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "space-y-6" }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
 
-<%= render "devise/shared/links" %>
+        <div>
+          <%= f.label :email, "メールアドレス", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1">
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "your@example.com", class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+        </div>
+
+        <div>
+          <%= f.submit "パスワード再設定の案内を送信する", class: "w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition cursor-pointer" %>
+        </div>
+      <% end %>
+
+      <div class="mt-6 border-t border-gray-100 pt-4 text-center text-xs space-y-2">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>

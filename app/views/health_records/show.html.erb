@@ -30,14 +30,32 @@
   </div>
 
   <!-- AIアドバイス（主役カード） -->
-  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-6 rounded-r-2xl shadow-sm mb-8">
-    <h2 class="text-blue-900 font-bold text-lg mb-2 flex items-center">
-      <span class="mr-2">🤖</span> AI健康コーチのアドバイス
-    </h2>
-    <p class="text-gray-700 leading-relaxed italic">
-      <%= @health_record.ai_advice.presence || "現在アドバイスを分析・生成中です。しばらくお待ちください..." %>
-    </p>
+  <% # 1. サーバーからのリアルタイム更新（WebSocket）を受信するアンテナを設置 %>
+<%= turbo_stream_from "health_record_#{@health_record.id}_advice_channel" %>
+
+<div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100 mt-8">
+  <h3 class="text-sm font-bold text-blue-800 tracking-wider uppercase mb-3 flex items-center">
+    <span>🤖 AI健康管理コーチのアドバイス</span>
+  </h3>
+
+  <% # 2. Jobからピンポイントで中身を書き換えるための固定の器（ID付きのdiv） %>
+  <div id="ai_advice_box_<%= @health_record.id %>" class="min-h-[60px] flex items-center">
+    <% if @health_record.ai_advice.present? %>
+      <% # すでにアドバイスが存在する場合はそのまま表示 %>
+      <%= render "health_records/ai_advice_content", health_record: @health_record %>
+    <% else %>
+      <% # まだ無い、または生成中の場合は、Tailwindの「animate-pulse」でリッチなローディングを表示 %>
+      <div class="w-full flex items-center space-x-3 text-gray-500 text-sm animate-pulse">
+        <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="w3.org" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="font-medium text-blue-700">AIコーチが今日のデータを解析してアドバイスを考えています...</span>
+      </div>
+    <% end %>
   </div>
+</div>
+
 
   <!-- 食事の記録（3列） -->
   <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">

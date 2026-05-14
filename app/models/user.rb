@@ -12,4 +12,14 @@ class User < ApplicationRecord
       user.target_sleep_time = 7.5
     end
   end
+
+  # ゲストユーザーの過去の古いデータを一括削除するクレンジング処理
+  def self.cleanup_guest_data
+    guest_user = find_by(email: 'guest@example.com')
+    return unless guest_user
+
+    # ゲストユーザーに紐づく健康記録のうち、今日（操作日）より前のレコードをすべて物理削除
+    # 当日のデータだけを残すことで、お試し中の当日の画面表示の崩れを防ぎます
+    guest_user.health_records.where('recorded_on < ?', Date.today).destroy_all
+  end
 end
