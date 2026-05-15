@@ -56,7 +56,7 @@ class HealthRecordsController < ApplicationController
       @health_record = current_user.health_records.build(health_record_params)
       
       if @health_record.save
-        @health_record.generate_ai_advice
+        GenerateAiAdviceJob.perform_later(@health_record.id)
         redirect_to health_record_url(@health_record), notice: "健康記録を保存し、AIアドバイスを生成しました。"
       else
         render :new, status: :unprocessable_entity
