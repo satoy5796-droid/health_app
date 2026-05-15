@@ -154,10 +154,66 @@
     </div>
   </div>
 <% else %>
-  <div class="max-w-md mx-auto my-12 p-8 bg-white rounded-xl shadow-md border border-gray-100 text-center">
-    <!-- 案内文言 -->
-    <%= button_to "ゲストとして利用開始", users_guest_sign_in_path, method: :post, data: { turbo: false }, class: "bg-green-600 text-white ..." %>
-    <%= link_to "アカウントにログイン", new_user_session_path, data: { turbo: false }, class: "bg-blue-600 text-white ..." %>
-    <%= link_to "新しくアカウントを登録", new_user_registration_path, data: { turbo: false }, class: "text-gray-500 ..." %>
+    <!-- 未ログイン時（LP風トップ画面） -->
+  <div class="max-w-4xl mx-auto my-12 px-4">
+    <!-- ヒーローセクション: アプリの価値を伝えるキャッチコピー -->
+    <div class="text-center space-y-4 mb-12">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+        ✨ Rails 7.2 × OpenAI 搭載の最新ライフログ
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
+        あなたの日常に、<br class="sm:hidden">AIの専属健康コーチを。
+      </h1>
+      <p class="max-w-xl mx-auto text-base text-gray-500">
+        毎日の睡眠時間と体調データを1タップで記録。最新のAIモデルがあなたのデータから生活改善のパーソナルアドバイスをリアルタイムで生成します。
+      </p>
+    </div>
+
+    <!-- 特徴紹介（3つのメリット） -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm text-center space-y-2">
+        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mx-auto text-xl">📊</div>
+        <h3 class="font-bold text-gray-900">スマートな視覚化</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">睡眠と体調スコアを複合グラフで重ね合わせて瞬時に把握。</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm text-center space-y-2">
+        <div class="w-10 h-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center mx-auto text-xl">🤖</div>
+        <h3 class="font-bold text-gray-900">AIアドバイス</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">OpenAIがあなたの食事や生活リズムを分析し、最適な過ごし方を提案。</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm text-center space-y-2">
+        <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center mx-auto text-xl">⚡</div>
+        <h3 class="font-bold text-gray-900">瞬時のリアルタイム通信</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">Turbo Streams技術により、非同期でアドバイスが届く新感覚UX。</p>
+      </div>
+    </div>
+
+    <!-- アクションカード: ユーザー登録・ログイン導線 -->
+    <div class="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-sm border border-gray-200/60 text-center space-y-6">
+      <h2 class="text-lg font-bold text-gray-900">さっそく体験してみる</h2>
+      
+      <div class="space-y-3">
+        <!-- ゲストログイン（最も目立たせるプライマリボタン） -->
+        <%= button_to users_guest_sign_in_path, method: :post, data: { turbo: false }, class: "w-full inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transform transition hover:-translate-y-0.5 active:translate-y-0 active:scale-98 cursor-pointer" do %>
+          ⚡ 登録不要でゲスト利用開始
+        <% end %>
+
+        <!-- 通常の新規アカウント登録 -->
+        <%= link_to new_user_registration_path, data: { turbo: false }, class: "w-full inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-sm transform transition hover:-translate-y-0.5 active:translate-y-0 active:scale-98 cursor-pointer" do %>
+          新しくアカウントを作成する
+        <% end %>
+      </div>
+
+      <div class="relative flex py-2 items-center-center">
+        <div class="flex-grow border-t border-gray-200"></div>
+        <span class="flex-shrink mx-4 text-xs text-gray-400 font-medium">既にアカウントをお持ちの方</span>
+        <div class="flex-grow border-t border-gray-200"></div>
+      </div>
+
+      <!-- 既存アカウントへのログイン -->
+      <div>
+        <%= link_to "アカウントにログインする", new_user_session_path, data: { turbo: false }, class: "inline-flex items-center justify-center text-sm font-semibold text-gray-600 hover:text-blue-600 border border-gray-200 hover:border-blue-200 bg-gray-50/50 hover:bg-blue-50/30 w-full py-2.5 rounded-xl transition" %>
+      </div>
+    </div>
   </div>
 <% end %>
