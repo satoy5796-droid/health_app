@@ -28,7 +28,6 @@ class HealthRecord < ApplicationRecord
   def generate_ai_advice
     client = OpenAI::Client.new(access_token: Rails.application.credentials.openai[:api_key])
     
-    # 修正: AIに「5が最高、1が最悪」という評価軸を明確に伝えるようプロンプトを補足
     prompt = <<~EOS
       あなたは健康管理コーチです。以下のデータに基づき、明日をより良く過ごすためのアドバイスを60文字以内で優しく送ってください。
       ・体調(1-5の数値。5が最高、1が最悪): #{condition} (#{condition_text})
@@ -40,7 +39,7 @@ class HealthRecord < ApplicationRecord
 
     response = client.chat(
       parameters: {
-        model: "gpt-3.5-turbo", # または "gpt-4"
+        model: "gpt-4o-mini", # gpt-3.5-turbo からアップグレードして429エラーを大幅に軽減
         messages: [{ role: "user", content: prompt }],
       }
     )
@@ -50,9 +49,9 @@ class HealthRecord < ApplicationRecord
       update(ai_advice: advice)
     end
   rescue => e
-    # エラーが起きてもログに記録するだけで、アプリは止めない
-    logger.error "AI Advice Generation Failed: #{e.message}"
-    update(ai_advice: "現在、アドバイスを生成できません。時間を置いて確認してください。")
+    # ログに記録した上で、例外を再発生させてActive Jobの retry_on に検知・リトライさせる
+    logger.error "OpenAI API Error: #{e.message}"
+    raise e
   end
 
   private
