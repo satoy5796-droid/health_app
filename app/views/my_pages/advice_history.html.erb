@@ -8,7 +8,7 @@
       <p class="mt-1 text-sm text-gray-500">過去にAIコーチから届いた大切なアドバイスのストックです。</p>
     </div>
     <div class="text-sm font-medium bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full border border-blue-100 self-start md:self-center">
-      ストック数: <span class="font-bold"><%= @health_records.count %></span> 件
+      ストック数: <span class="font-bold"><%= @all_advice_records.count %></span> 件
     </div>
   </div>
 
@@ -28,35 +28,30 @@
     <% end %>
   </div>
 
-  <!-- アドバイス一覧（カードレイアウト） -->
-  <% if @health_records.any? %>
+  <!-- 条件分岐: データが存在する場合 -->
+  <% if @all_advice_records.any? %>
     <div class="grid grid-cols-1 gap-4">
-      <% @health_records.each do |record| %>
+      
+      <% start_index = (@current_page - 1) * 10 %>
+      <% current_page_advices = @all_advice_records.drop(start_index).take(10) %>
+
+      <% current_page_advices.each do |record| %>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6 transition hover:shadow-md space-y-4">
           
-          <!-- カード上部: 日付と体調・睡眠データの要約 -->
+          <!-- カード上部: 日付と体調・睡眠データ -->
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-50 pb-3">
             <div class="flex items-center gap-3">
               <span class="text-sm font-bold text-gray-900"><%= l(record.recorded_on, format: :long) rescue record.recorded_on %></span>
-              <!-- 体調バッジの簡易表示 -->
-              <% case record.condition.to_i %>
-              <% when 5 %>
-                <span class="text-xs px-2 py-0.5 rounded bg-teal-50 text-teal-700 font-medium">😊 5</span>
-              <% when 4 %>
-                <span class="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-medium">🙂 4</span>
-              <% when 3 %>
-                <span class="text-xs px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-medium">😐 3</span>
-              <% when 2 %>
-                <span class="text-xs px-2 py-0.5 rounded bg-orange-50 text-orange-700 font-medium">🙁 2</span>
-              <% when 1 %>
-                <span class="text-xs px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-medium">🤮 1</span>
-              <% end %>
+              
+              <!-- ⭕ 修正ポイント: バグの元だったcase文を関数1行に置き換えて安全化 -->
+              <%= condition_badge(record.condition) %>
+              
               <span class="text-xs text-gray-500">😴 <%= record.sleep_time %>時間</span>
             </div>
             <%= link_to "この日の全記録を見る", health_record_path(record), data: { turbo: false }, class: "text-xs text-blue-600 hover:underline font-semibold" %>
           </div>
 
-          <!-- カード中部: AIアドバイス内容（メイン） -->
+          <!-- カード中部: AIアドバイス内容 -->
           <div class="flex gap-3 bg-blue-50/40 p-4 rounded-xl border border-blue-100/50">
             <div class="text-2xl select-none">🤖</div>
             <div class="space-y-1">
@@ -65,7 +60,7 @@
             </div>
           </div>
 
-          <!-- カード下部: その日の食事メモのチラ見せ（入力がある場合のみ） -->
+          <!-- カード下部: その日の食事メモ -->
           <% if record.breakfast_memo.present? || record.lunch_memo.present? || record.dinner_memo.present? %>
             <div class="text-[11px] text-gray-400 flex flex-wrap gap-x-4 gap-y-1 bg-gray-50/50 p-2 rounded-lg">
               <% if record.breakfast_memo.present? %>
@@ -83,8 +78,14 @@
         </div>
       <% end %>
     </div>
+
+    <!-- ページネーションリンクエリア -->
+    <div class="flex justify-center pt-6">
+      <%= pure_rails_pagination(@all_advice_records.count, @current_page, mypage_advices_path) %>
+    </div>
+
   <% else %>
-    <!-- 検索結果が空、またはデータがまだ無い場合のプレースホルダー -->
+    <!-- 条件分岐: 検索結果が空、またはデータがまだ無い場合のプレースホルダー -->
     <div class="text-center py-16 bg-white rounded-xl border border-gray-100 shadow-sm">
       <div class="text-4xl mb-3">🔍</div>
       <p class="text-base font-semibold text-gray-900">該当するアドバイス履歴が見つかりません</p>

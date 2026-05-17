@@ -14,11 +14,16 @@ class HealthRecordsController < ApplicationController
       @health_records = current_user.health_records
                                     .where(recorded_on: @range.ago..Date.today)
                                     .order(:recorded_on)
-                                    
+      # 追記: テーブル専用の変数を「新着順で最大10件」として新しく切り出す
+      @all_table_records = current_user.health_records.order(recorded_on: :desc).to_a
+      
+      @current_page = (params[:page] || 1).to_i
     # 2. 未ログイン（ログアウト直後含む）の場合の処理
     else
       # エラーを防ぐため、空のレコードセットを渡しておく
       @health_records = HealthRecord.none
+      @all_table_records = []
+      @current_page = 1
     end
   end
 

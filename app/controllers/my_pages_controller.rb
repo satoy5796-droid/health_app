@@ -1,4 +1,5 @@
 class MyPagesController < ApplicationController
+  include Pagy::Backend
   before_action :authenticate_user!
 
   def advice_history
@@ -12,8 +13,11 @@ class MyPagesController < ApplicationController
         "ai_advice LIKE ? OR breakfast_memo LIKE ? OR lunch_memo LIKE ? OR dinner_memo LIKE ?",
         q, q, q, q
       )
-    else
-      @health_records = base_records
     end
+    # 3. ページネーション用に全検索結果を配列化して保持
+    @all_advice_records = base_records.to_a
+    
+    # 4. 現在のページ番号を取得（デフォルトは1ページ目）
+    @current_page = (params[:page] || 1).to_i
   end
 end
