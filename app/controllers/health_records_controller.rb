@@ -1,5 +1,6 @@
 class HealthRecordsController < ApplicationController
   before_action :authenticate_user!, except: [:index]
+  before_action :redirect_if_not_logged_in, except: [:index]
   before_action :set_health_record, only: %i[ show edit update destroy ]
 
   def index
@@ -69,6 +70,13 @@ class HealthRecordsController < ApplicationController
   end
 
   private
+
+  def redirect_if_not_logged_in
+    unless user_signed_in?
+      # フラッシュメッセージの読み込みエラーを防ぐため、敢えてメッセージなしで安全にトップ（LP）へ戻す
+      redirect_to root_path
+    end
+  end
 
   def set_health_record
     @health_record = current_user.health_records.find(params[:id])
