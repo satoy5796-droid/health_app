@@ -71,7 +71,8 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter = :resque
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   # config.active_job.queue_name_prefix = "health_app_production"
 
   # Disable caching for Action Mailer templates even if Action Controller
@@ -104,6 +105,7 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
   # 本番用バックエンドにSolid Queueを指定
   config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # RenderのURLからのWebSocket接続を許可
   config.action_cable.allowed_request_origins = [ /https:\/\/.*\.onrender\.com/, "http://localhost:3000" ]
