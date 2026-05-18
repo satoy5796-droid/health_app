@@ -6,7 +6,7 @@ services:
     env: ruby
     buildCommand: "./bin/render-build.sh"
     # ⭕ 変更: Puma（Web）の起動と同時に、同じ環境内でバックグラウンドワーカーを並列起動（&）させます
-    startCommand: "bundle exec puma -C config/puma.rb & bundle exec rake active_job:work"
+    startCommand: "SOLID_QUEUE_IN_PUMA=true bundle exec puma -C config/puma.rb"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
