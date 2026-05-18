@@ -1,108 +1,81 @@
 class HealthRecordsController < ApplicationController
-  # before_action :authenticate_user!
   before_action :authenticate_user!, except: [:index]
   before_action :set_health_record, only: %i[ show edit update destroy ]
 
-  # GET /health_records or /health_records.json
   def index
-    # 1. ログインしている場合の処理
     if user_signed_in?
-      # 期間の判定（デフォルトは1週間）
       @range = params[:range] == 'month' ? 1.month : 1.week
       
-      # 自分のデータを取得
+      # 1. グラフ用データ（全件）
       @health_records = current_user.health_records
                                     .where(recorded_on: @range.ago..Date.today)
                                     .order(:recorded_on)
-      # 追記: テーブル専用の変数を「新着順で最大10件」として新しく切り出す
+
+      # 2. テーブル用データ（最新順で過去の全データから配列化）
       @all_table_records = current_user.health_records.order(recorded_on: :desc).to_a
-      
       @current_page = (params[:page] || 1).to_i
-    # 2. 未ログイン（ログアウト直後含む）の場合の処理
     else
-      # エラーを防ぐため、空のレコードセットを渡しておく
       @health_records = HealthRecord.none
       @all_table_records = []
       @current_page = 1
     end
   end
 
-  # GET /health_records/1 or /health_records/1.json
   def show
   end
 
-  # GET /health_records/new
   def new
-    @health_record = HealthRecord.new
+    @health_record = current_user.health_records.build
   end
 
-  # GET /health_records/1/edit
   def edit
   end
 
-  # POST /health_records or /health_records.json
   def create
-    # ① 入力された日付の既存レコードがあるか探す
     existing_record = current_user.health_records.find_by(recorded_on: health_record_params[:recorded_on])
-
     if existing_record
-      # 【修正箇所】既存レコードがある場合、変数名を @health_record にする
       @health_record = existing_record
-      
       if @health_record.update(health_record_params)
         GenerateAiAdviceJob.perform_later(@health_record.id)
         redirect_to health_record_url(@health_record), notice: "本日の記録を上書き更新しました。"
       else
-        # ここで _form.html.erb に @health_record が渡されます
         render :new, status: :unprocessable_entity
       end
     else
-      # ② 新規作成の場合
       @health_record = current_user.health_records.build(health_record_params)
-      
       if @health_record.save
         GenerateAiAdviceJob.perform_later(@health_record.id)
-        redirect_to health_record_url(@health_record), notice: "健康記録を保存し、AIアドバイスを生成しました。"
+        redirect_to health_record_url(@health_record), notice: "健康記録を保存しました。AIアドバイスを生成中です..."
       else
         render :new, status: :unprocessable_entity
       end
     end
   end
 
-
-
-  # PATCH/PUT /health_records/1 or /health_records/1.json
+  # ⭕ 決定的な修正ポイント: updateアクション内を、先ほど検証成功した非同期Job呼び出し（perform_later）に100%同期します
   def update
-    respond_to do |format|
-      if @health_record.update(health_record_params)
-        GenerateAiAdviceJob.perform_later(@health_record.id)
-        format.html { redirect_to @health_record, notice: "健康記録を更新しました。", status: :see_other }
-        format.json { render :show, status: :ok, location: @health_record }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @health_record.errors, status: :unprocessable_entity }
-      end
+    if @health_record.update(health_record_params)
+      # 以前の古い直接呼び出しなどが残っていた場合、ここで500エラーを引き起こしていました
+      GenerateAiAdviceJob.perform_later(@health_record.id)
+      redirect_to health_record_url(@health_record), notice: "健康記録を更新しました。AIアドバイスを再生成中です..."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  # DELETE /health_records/1 or /health_records/1.json
   def destroy
-    @health_record.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to health_records_path, notice: "健康記録を削除しました。", status: :see_other }
-      format.json { head :no_content }
-    end
+    @health_record.destroy
+    redirect_to health_records_url, notice: "健康記録を削除しました。"
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_health_record
-      @health_record = current_user.health_records.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def health_record_params
-      params.require(:health_record).permit(:user_id, :recorded_on, :condition, :sleep_time, :breakfast_memo, :lunch_memo, :dinner_memo, :ai_advice)
-    end
+  def set_health_record
+    @health_record = current_user.health_records.find(params[:id])
+  end
+
+  # ⭕ ストロングパラメーターの確認: 5段階の数値となった condition を安全に許可
+  def health_record_params
+    params.require(:health_record).permit(:recorded_on, :sleep_time, :condition, :breakfast_memo, :lunch_memo, :dinner_memo)
+  end
 end
