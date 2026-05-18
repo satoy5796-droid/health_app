@@ -21,7 +21,7 @@ services:
     name: health-ai-coach-worker
     env: ruby
     buildCommand: "./bin/render-build.sh"
-    startCommand: "bundle exec solid_queue"
+    startCommand: "bundle exec puma -C config/puma.rb & bundle exec rake active_job:work"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
