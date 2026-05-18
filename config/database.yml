@@ -82,5 +82,12 @@ production:
   <<: *default
   adapter: postgresql
   url: <%= ENV['DATABASE_URL'] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 }.to_i + 10 %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 1 }.to_i + 10 %>
 
+  # ⭕ 決定的な修正ポイント: Solid Queueが探しに行く本番用「queue」設定を明示
+  # アプリと同じ本番用PostgreSQL（DATABASE_URL）をそのまま指し示すことで、余計なDBを契約せず完全に同居させます
+  queue:
+    <<: *default
+    adapter: postgresql
+    url: <%= ENV['DATABASE_URL'] %>
+    pool: 5
