@@ -1,3 +1,4 @@
+<!-- app/views/health_records/_form.html.erb -->
 <%= form_with(model: health_record, class: "contents") do |form| %>
   <% if health_record.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
@@ -12,7 +13,6 @@
 
   <div class="space-y-6">
     <!-- セクション1: 基本情報 -->
-    <!-- レイアウト変更: 体調ボタンを横いっぱいに配置するためflex/gridで上下に分割 -->
     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6">
       <!-- 上段: 記録日と睡眠時間を2列で配置 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <!-- 下段: 今日の体調（5段階ボタンUIを埋め込み） -->
+      <!-- 下段: 今日の体調（5段階ボタンUI） -->
       <div>
         <%= form.label :condition, "今日の体調", class: "block text-sm font-bold text-gray-700 mb-2" %>
         <div class="grid grid-cols-5 gap-2 sm:gap-3">
