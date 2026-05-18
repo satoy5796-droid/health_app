@@ -1,18 +1,14 @@
-default: &default
-  dispatchers:
-    - polling_interval: 1
-      batch_size: 500
-  workers:
-    - queues: "*"
-      threads: 3
-      processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
-      polling_interval: 0.1
+# config/queue.yml
 
-development:
-  <<: *default
-
-test:
-  <<: *default
-
+# ⭕ 追記: Solid Queue専用の独立した接続設定（queue）を無視し、通常の「production」DB接続をそのまま共用させます
 production:
-  <<: *default
+  connects_to:
+    database:
+      writing: production
+  dispatchers:
+    - polling_interval: 1.second
+      batch_size: 10
+  workers:
+    - queues: [ "*" ]
+      threads: 1 # メモリ最節約仕様
+      polling_interval: 1.second
