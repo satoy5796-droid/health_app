@@ -1,26 +1,11 @@
 # render.yaml
 services:
-  # ① Webアプリケーションサーバー（画面用）
+  # ① Webアプリケーションサーバー（ここでワーカーも同時に安全に起動させます）
   - type: web
     name: health-ai-coach-web
     env: ruby
     buildCommand: "./bin/render-build.sh"
-    startCommand: "bundle exec puma -C config/puma.rb"
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: health-ai-db
-          property: connectionString
-      - key: RAILS_MASTER_KEY
-        sync: false
-      - key: OPENAI_API_KEY
-        sync: false
-
-  # ② バックグラウンドジョブワーカー（AIアドバイス自動生成・WebSocket配信用）
-  - type: worker
-    name: health-ai-coach-worker
-    env: ruby
-    buildCommand: "./bin/render-build.sh"
+    # ⭕ 変更: Puma（Web）の起動と同時に、同じ環境内でバックグラウンドワーカーを並列起動（&）させます
     startCommand: "bundle exec puma -C config/puma.rb & bundle exec rake active_job:work"
     envVars:
       - key: DATABASE_URL
@@ -32,9 +17,9 @@ services:
       - key: OPENAI_API_KEY
         sync: false
 
-# ③ 本番用 PostgreSQL データベースサーバー
+# ② 本番用 PostgreSQL データベースサーバー
 databases:
   - name: health-ai-db
     databaseName: health_ai_coach_production
     user: health_coach_user
-    plan: free # 無料プランを指定。必要に応じて有料プランへ変更可能
+    plan: free
