@@ -105,7 +105,7 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
   # 本番用バックエンドにSolid Queueを指定
   config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.solid_queue.connects_to = { database: { writing: :production } }
 
   # RenderのURLからのWebSocket接続を許可
   config.action_cable.allowed_request_origins = [ /https:\/\/.*\.onrender\.com/, "http://localhost:3000" ]

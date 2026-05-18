@@ -83,11 +83,3 @@ production:
   adapter: postgresql
   url: <%= ENV['DATABASE_URL'] %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 1 }.to_i + 10 %>
-
-  # ⭕ 100%構文エラーを消し去る修正:
-  # アンカーやエイリアスを使わず、Solid Queueが探しに来る「queue」設定に直接同じ内容を直書きします。
-  # これによりYAMLのパースバグが起きる余地を完全にゼロにします。
-  queue:
-    adapter: postgresql
-    url: <%= ENV['DATABASE_URL'] %>
-    pool: 5
