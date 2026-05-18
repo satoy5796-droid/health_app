@@ -21,7 +21,7 @@ services:
     name: health-ai-coach-worker
     env: ruby
     buildCommand: "./bin/render-build.sh"
-    startCommand: "bundle exec jobs start"
+    startCommand: "bundle exec rails solid_queue:start"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
