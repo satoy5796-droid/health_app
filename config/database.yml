@@ -83,3 +83,9 @@ production:
   adapter: postgresql
   url: <%= ENV['DATABASE_URL'] %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 1 }.to_i + 10 %>
+
+  # ⭕ 100%エラーを消し去る修正: 
+  # Railsの初期化エンジンが探しに行く「queue」というキーを明示的に作成し、
+  # 上で作ったprimary（DATABASE_URL）と全く同じ場所を強制的に指し示して同居させます。
+  queue:
+    <<: *production_primary

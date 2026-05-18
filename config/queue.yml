@@ -1,14 +1,9 @@
 # config/queue.yml
-
-# ⭕ 追記: Solid Queue専用の独立した接続設定（queue）を無視し、通常の「production」DB接続をそのまま共用させます
 production:
-  connects_to:
-    database:
-      writing: production
   dispatchers:
     - polling_interval: 1.second
       batch_size: 10
   workers:
     - queues: [ "*" ]
-      threads: 1 # メモリ最節約仕様
+      threads: 1
       polling_interval: 1.second
