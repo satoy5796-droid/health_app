@@ -1,13 +1,11 @@
 # render.yaml
 services:
-  # ① Webアプリケーションサーバー（ここでワーカーも同時に安全に起動させます）
+  # ① Webアプリケーションサーバーのみ（ここでAIアドバイスもinlineで安全に同時処理します）
   - type: web
     name: health-ai-coach-web
     env: ruby
     buildCommand: "./bin/render-build.sh"
-    # ⭕ 変更: Puma（Web）の起動と同時に、同じ環境内でバックグラウンドワーカーを並列起動（&）させます
-    startCommand: "SOLID_QUEUE_IN_PUMA=true bundle exec puma -C config/puma.rb"
-    envVars:
+    startCommand: "bundle exec puma -C config/puma.rb"
       - key: DATABASE_URL
         fromDatabase:
           name: health-ai-db

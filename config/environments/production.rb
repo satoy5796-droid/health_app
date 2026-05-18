@@ -103,8 +103,7 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  # 本番用バックエンドにSolid Queueを指定
-  config.active_job.queue_adapter = :solid_queue
+  config.active_job.queue_adapter = :inline
   config.solid_queue.connects_to = { database: { writing: :production } }
 
   # RenderのURLからのWebSocket接続を許可
