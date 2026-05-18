@@ -65,3 +65,5 @@ gem "chartkick", "~> 5.2"
 
 gem "ruby-openai", "~> 8.3"
 
+gem "solid_queue"
+

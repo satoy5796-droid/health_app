@@ -113,6 +113,8 @@ GEM
     drb (2.2.3)
     erb (6.0.4)
     erubi (1.13.1)
+    et-orbi (1.4.0)
+      tzinfo
     event_stream_parser (1.0.0)
     faraday (2.14.1)
       faraday-net_http (>= 2.0, < 3.5)
@@ -122,6 +124,9 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.2)
       net-http (~> 0.5)
+    fugit (1.12.1)
+      et-orbi (~> 1.4)
+      raabro (~> 1.4)
     globalid (1.3.0)
       activesupport (>= 6.1)
     i18n (1.14.8)
@@ -221,6 +226,7 @@ GEM
     public_suffix (7.0.5)
     puma (8.0.1)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.21)
     rack-session (2.1.2)
@@ -313,6 +319,13 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
+    solid_queue (1.4.0)
+      activejob (>= 7.1)
+      activerecord (>= 7.1)
+      concurrent-ruby (>= 1.3.1)
+      fugit (~> 1.11)
+      railties (>= 7.1)
+      thor (>= 1.3.1)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -391,6 +404,7 @@ DEPENDENCIES
   rubocop-rails-omakase
   ruby-openai (~> 8.3)
   selenium-webdriver
+  solid_queue
   sprockets-rails
   stimulus-rails
   tailwindcss-rails
