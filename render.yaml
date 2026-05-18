@@ -1,0 +1,40 @@
+# render.yaml
+services:
+  # ① Webアプリケーションサーバー（画面用）
+  - type: web
+    name: health-ai-coach-web
+    env: ruby
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: health-ai-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+  # ② バックグラウンドジョブワーカー（AIアドバイス自動生成・WebSocket配信用）
+  - type: worker
+    name: health-ai-coach-worker
+    env: ruby
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec rake solid_queue:start"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: health-ai-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+# ③ 本番用 PostgreSQL データベースサーバー
+databases:
+  - name: health-ai-db
+    databaseName: health_ai_coach_production
+    user: health_coach_user
+    plan: free # 無料プランを指定。必要に応じて有料プランへ変更可能

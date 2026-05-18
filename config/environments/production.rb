@@ -102,4 +102,9 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # 本番用バックエンドにSolid Queueを指定
+  config.active_job.queue_adapter = :solid_queue
+
+  # RenderのURLからのWebSocket接続を許可
+  config.action_cable.allowed_request_origins = [ /https:\/\/.*\.onrender\.com/, "http://localhost:3000" ]
 end
