@@ -1,21 +1,21 @@
+# app/models/health_record.rb
 class HealthRecord < ApplicationRecord
   belongs_to :user
 
   # モデルからビューへストリーミングをブロードキャストできるようにする設定
   include Turbo::Broadcastable
 
+  # バリデーション: condition を整数（1〜5）に制限
   validates :recorded_on, presence: true, uniqueness: { scope: :user_id }
   validates :sleep_time, presence: true, 
                          numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 24 }
-  
-  # 修正: presence検証を数値範囲（1〜5の整数）の検証にアップグレード
   validates :condition, presence: true, numericality: { only_integer: true, in: 1..5 }
   
   validate :recorded_on_cannot_be_in_the_future
 
-  # 追記: 数値に対応するテキストを返すヘルパーメソッド（ビューやグラフで利用可能）
+  # 数値に対応するテキストを返すヘルパーメソッド
   def condition_text
-    case condition
+    case condition.to_i
     when 5 then "最高"
     when 4 then "良い"
     when 3 then "普通"
@@ -28,6 +28,7 @@ class HealthRecord < ApplicationRecord
   def generate_ai_advice
     client = OpenAI::Client.new(access_token: Rails.application.credentials.openai[:api_key])
     
+    # AIに5段階スコアの評価軸を明確に伝えるプロンプト
     prompt = <<~EOS
       あなたは健康管理コーチです。以下のデータに基づき、明日をより良く過ごすためのアドバイスを60文字以内で優しく送ってください。
       ・体調(1-5の数値。5が最高、1が最悪): #{condition} (#{condition_text})
@@ -39,7 +40,7 @@ class HealthRecord < ApplicationRecord
 
     response = client.chat(
       parameters: {
-        model: "gpt-4o-mini", # gpt-3.5-turbo からアップグレードして429エラーを大幅に軽減
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
       }
     )
