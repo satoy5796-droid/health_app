@@ -6,7 +6,7 @@
 
 ---
 
-## サービスのURL
+## ✅サービスのURL
 https://health-ai-coach-web.onrender.com
 
 ---
@@ -15,11 +15,11 @@ https://health-ai-coach-web.onrender.com
 
 | ログイン前（ランディングページ） | ログイン中（ダッシュボード） |
 | --- | --- |
-| <img src= app/assets/images/screenshot_02.png width="400" alt="LP画面"> | <img src= app/assets/images/screenshot_01.png width="400" alt="ダッシュボード画面"> |
+| <img src= /app/assets/images/screenshot_02.png width="400" alt="LP画面"> | <img src= /app/assets/images/screenshot_01.png width="400" alt="ダッシュボード画面"> |
 
 | 記録入力フォーム（5段階UI） | AIアドバイス履歴（マイページ） |
 | --- | --- |
-| <img src= app/assets/images/screenshot_03.png width="400" alt="入力画面"> | <img src= app/assets/images/screenshot_04.png width="400" alt="履歴画面"> |
+| <img src= /app/assets/images/screenshot_03.png width="400" alt="入力画面"> | <img src= /app/assets/images/screenshot_04.png width="400" alt="履歴画面"> |
 
 ---
 
