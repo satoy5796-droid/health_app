@@ -15,11 +15,11 @@ https://health-ai-coach-web.onrender.com
 
 | ログイン前（ランディングページ） | ログイン中（ダッシュボード） |
 | --- | --- |
-| ![LP画面](/assets/images/screenshot_02.png) | ![ダッシュボード画面](/assets/images/screenshot_01.png)  |
+| ![LP画面](/app/assets/images/screenshot_02.png) | ![ダッシュボード画面](/app/assets/images/screenshot_01.png)  |
 
 | 記録入力フォーム（5段階UI） | AIアドバイス履歴（マイページ） |
 | --- | --- |
-| ![入力画面](/assets/images/screenshot_03.png) | ![履歴画面](/assets/images/screenshot_04.png) |
+| ![入力画面](/app/assets/images/screenshot_03.png) | ![履歴画面](/app/assets/images/screenshot_04.png) |
 
 ---
 
