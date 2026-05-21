@@ -11,21 +11,19 @@ https://health-ai-coach-web.onrender.com
 
 ---
 
-## 🖼️ アプリのスクショ
+## 🖼️ サービス画像
 
 | ログイン前（ランディングページ） | ログイン中（ダッシュボード） |
 | --- | --- |
-| <img src="app/assets/images/screenshot_02.png" width="400" alt="LP画面"> | <img src="app/assets/images/screenshot_01.png" width="400" alt="ダッシュボード画面"> |
+| <img src= app/assets/images/screenshot_02.png width="400" alt="LP画面"> | <img src= app/assets/images/screenshot_01.png width="400" alt="ダッシュボード画面"> |
 
 | 記録入力フォーム（5段階UI） | AIアドバイス履歴（マイページ） |
 | --- | --- |
-| <img src="app/assets/images/screenshot_03.png" width="400" alt="入力画面"> | <img src="app/assets/images/screenshot_04.png" width="400" alt="履歴画面"> |
-
-*※ `public/images/` ディレクトリの中にそれぞれのスクリーンショット画像を配置すると、ここに自動で表示されます。*
+| <img src= app/assets/images/screenshot_03.png width="400" alt="入力画面"> | <img src= app/assets/images/screenshot_04.png width="400" alt="履歴画面"> |
 
 ---
 
-## 🚀 アプリの使い方（基本的な操作方法）
+## 🚀 アプリの使い方
 
 1. **1秒で体験（ゲストログイン）**
    トップ画面にあるエメラルドグリーンの「⚡ 登録不要でゲスト利用開始」ボタンを押すと、アカウント作成の手間なく瞬時にダッシュボードへログインできます。
@@ -38,7 +36,7 @@ https://health-ai-coach-web.onrender.com
 
 ---
 
-## 🎯 なぜこれを作ったか（開発の動機・背景）
+## 🎯 開発の動機・背景
 
 現代社会において、体調不良や睡眠不足を感じていても「具体的に自分の生活リズムのどこに問題があるのか」を自分一人で客観的に分析し、改善し続けることは困難です。
 また、従来の健康管理アプリは「記録をつけて終わり」のものが多く、ユーザーが途中で飽きてしまうという課題がありました。
@@ -47,7 +45,7 @@ https://health-ai-coach-web.onrender.com
 
 ---
 
-## 💡 工夫したところ（技術的なこだわりポイント）
+## 💡 工夫したところ
 
 1. **インフラを守る「ゲストデータの自動クレンジング」と1秒ログイン**
    ポートフォリオとして最も多くのユーザーが触れる「ゲストログイン」において、データが際限なく蓄積してデータベースを圧迫するリスクを防ぐため、ログイン時に過去の古い体験用データを自動で一括クレンジング・リセットするようにしました。これにより、蓄積したデータに圧迫されることなく、ユーザーに「登録不要で1秒で全機能を体験できる」ことを可能にしました。
@@ -59,7 +57,7 @@ https://health-ai-coach-web.onrender.com
 
 ---
 
-## 📊 ER図（データベースの設計図）
+## 📊 ER図
 
 アプリケーションは、ユーザーの認証情報を守る `User` モデルと、日々のデータを蓄積する `HealthRecord` モデルの「1対多（`has_many`）」のクリーンなリレーションで設計されています。
 
