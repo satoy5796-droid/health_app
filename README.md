@@ -10,11 +10,11 @@
 
 | ログイン前（ランディングページ） | ログイン中（ダッシュボード） |
 | --- | --- |
-| <img src="public/images/screenshot_lp.png" width="400" alt="LP画面"> | <img src="public/images/screenshot_dashboard.png" width="400" alt="ダッシュボード画面"> |
+| <img src="images/screenshot_02.png" width="400" alt="LP画面"> | <img src="images/screenshot_01.png" width="400" alt="ダッシュボード画面"> |
 
 | 記録入力フォーム（5段階UI） | AIアドバイス履歴（マイページ） |
 | --- | --- |
-| <img src="public/images/screenshot_form.png" width="400" alt="入力画面"> | <img src="public/images/screenshot_history.png" width="400" alt="履歴画面"> |
+| <img src="images/screenshot_03.png" width="400" alt="入力画面"> | <img src="images/screenshot_04.png" width="400" alt="履歴画面"> |
 
 *※ `public/images/` ディレクトリの中にそれぞれのスクリーンショット画像を配置すると、ここに自動で表示されます。*
 
